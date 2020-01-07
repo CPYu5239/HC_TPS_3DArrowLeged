@@ -9,6 +9,8 @@ public class Player : MonoBehaviour
     private Rigidbody rig;
     private Transform target;
     private Animator ani;
+
+    private LevelManager levelManager;
     #endregion
 
     #region 事件
@@ -20,6 +22,7 @@ public class Player : MonoBehaviour
         //target = GameObject.Find("目標").GetComponent<Transform>();  
         target = GameObject.Find("目標").transform;  //只有transform可以直接這樣叫
         joy = GameObject.Find("虛擬搖桿").GetComponent<Joystick>();
+        levelManager = FindObjectOfType<LevelManager>();
     }
 
     private void Update()
@@ -33,6 +36,14 @@ public class Player : MonoBehaviour
     private void FixedUpdate()
     {
         PlayerMove();
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "傳送區域")
+        {
+            levelManager.StartCoroutine("LoadLevel");
+        }
     }
     #endregion
 

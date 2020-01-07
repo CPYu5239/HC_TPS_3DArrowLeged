@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
@@ -11,10 +13,12 @@ public class LevelManager : MonoBehaviour
     public GameObject randomSkill;
 
     private Animator door;
+    private Image cross;   //轉場畫面
 
     private void Start()
     {
         door = GameObject.Find("門").GetComponent<Animator>();
+        cross = GameObject.Find("轉場畫面").GetComponent<Image>();
 
         if (autoOpenDoor) Invoke("OpenDoor", 8);    //Invoke -> 延遲調用方法
         if (showRandomSkill) ShowRandomSkill();
@@ -34,5 +38,27 @@ public class LevelManager : MonoBehaviour
     private void OpenDoor()
     {
         door.SetTrigger("開門");
+    }
+
+    /// <summary>
+    /// 載入關卡
+    /// </summary>
+    private IEnumerator LoadLevel()
+    {
+        AsyncOperation ao = SceneManager.LoadSceneAsync("關卡2");
+        ao.allowSceneActivation = false;    //是否允許切換場景
+
+        while (!ao.isDone)
+        {
+            print(ao.progress);
+            cross.color = new Color(1, 1, 1, ao.progress);   //利用進度條0~0.9的性質來調整透明度
+            yield return new WaitForSeconds(0.01f);
+
+            if (ao.progress >= 0.9f)
+            {
+                cross.color = new Color(1, 1, 1, 1);
+                ao.allowSceneActivation = true;
+            }
+        }
     }
 }
