@@ -3,7 +3,7 @@
 public class Player : MonoBehaviour
 {
     #region 欄位宣告
-    [Header("移動速度"), Range(15f, 50f)]
+    [Header("移動速度"), Range(5f, 50f)]
     public float speed = 15f;
     private Joystick joy;
     private Rigidbody rig;
@@ -52,19 +52,20 @@ public class Player : MonoBehaviour
     /// 移動玩家方法
     /// </summary>
     private void PlayerMove()
-    {   
-        if(joy.Horizontal != 0 || joy.Vertical != 0)
+    {
+        if (joy.Horizontal != 0 || joy.Vertical != 0)
         {
-            int H = (joy.Horizontal < 0) ? -1 : 1;
-            int V = (joy.Vertical < 0) ? -1 : 1;
+            float H = joy.Horizontal;
+            float V = joy.Vertical;
 
             ani.SetBool("跑步開關", true);   //設定動畫變數開關
-            rig.AddForce(H * speed, 0, V * speed);
+            rig.velocity = new Vector3(H * speed, 0, V * speed);
+            //rig.AddForce(H * speed, 0, V * speed);
         }
         else
         {
             ani.SetBool("跑步開關", false);   //設定動畫變數開關
-            rig.Sleep();
+            rig.velocity = new Vector3(0, 0, 0);
         }
 
         //控制目標物件
